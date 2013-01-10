@@ -1,0 +1,12 @@
+{
+  "name": "wtfrudd", 
+  "license": "MPL 2.0", 
+  "author": "Nico Steiner", 
+  "version": "0.1", 
+  "fullName": "What the fuck R U doing, Dude?",
+  "id": "wtfrudd@nicosteiner.de", 
+  "description": "An Addon checking the tech skills of website creators",
+  "icon": "icon.png",
+  "icon64": "icon64.png",
+  "homepage": "http://www.nicosteiner.de/"
+}
