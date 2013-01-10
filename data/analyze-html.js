@@ -2,7 +2,9 @@ var WTFRUDD = WTFRUDD || {};
 
 WTFRUDD.Analyze = {};
 
-// communication
+// communication with add-on script
+// Doc says: "To enable add-on scripts and content scripts to communicate with each other, each end of the conversation has access to a port object."
+// see: https://addons.mozilla.org/en-US/developers/docs/sdk/latest/dev-guide/guides/content-scripts/using-port.html
 
 if (self) {
 
@@ -14,7 +16,12 @@ if (self) {
 
 }
 
+// here comes the custom add-on logic (only a demo prototype)
+
 // define ruleset
+// there are 2 kinds of rules:
+// - "normal" ones coming along as selector strings checked with JavaScript Selectors API
+// - "executable" functions for complex logic: returning true means, the test was successful and rule was not broken
 
 WTFRUDD.Analyze.ruleset = [{
 
@@ -69,15 +76,19 @@ WTFRUDD.Analyze.analyzeNow = function() {
   
     currentRuleset = WTFRUDD.Analyze.ruleset[i];
     
-    // switch between rules and functions
+    // switch between normal rules and executable functions
     
     if (currentRuleset.rules) {
     
       for (j = 0; j < currentRuleset.rules.length; j += 1) {
       
-        // check rule matchings
+        // check normal rules matching
+        // see: http://www.w3.org/TR/2012/PR-selectors-api-20121213/
         
         if (document.querySelector(currentRuleset.rules[j])) {
+        
+          // send message to add-on script (and from there further to panel script for output)
+          // see comment at top for details
         
           self.port.emit('add-title', currentRuleset.title + ' (' + currentRuleset.rules[j] + ')');
           
@@ -89,8 +100,13 @@ WTFRUDD.Analyze.analyzeNow = function() {
     
     } else if (currentRuleset.execute) {
     
+      // returning true means, the test was successful and rule was not broken
+    
       if (!currentRuleset.execute()) {
       
+        // send message to add-on script (and from there further to panel script for output)
+        // see comment at top for details
+        
         self.port.emit('add-title', currentRuleset.title);
         
       }
